@@ -10,3 +10,8 @@ categories = ["gui", "web-programming", "development-tools::build-utils"]
 keywords = ["dioxus", "router", "codegen", "file-based"]
 
 [dependencies]
+quote = "1.0.47"
+syn = { version = "3.0.9", features = ["full"] }
+
+[dev-dependencies]
+tempfile = "3.27.0"
