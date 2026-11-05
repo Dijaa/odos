@@ -1,6 +1,6 @@
 [package]
 name = "odos"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2024"
 description = "File-based routing for Dioxus"
 license = "MIT OR Apache-2.0"
