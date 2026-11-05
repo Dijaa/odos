@@ -5,3 +5,7 @@ version = 4
 [[package]]
 name = "odos"
 version = "0.0.2"
+
+[[package]]
+name = "odos-build"
+version = "0.0.1"

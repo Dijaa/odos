@@ -1,0 +1,11 @@
+[package]
+name = "odos"
+version = "0.0.2"
+edition = "2024"
+description = "File-based routing for Dioxus"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Dijaa/odos"
+readme = "README.md"
+categories = ["gui", "web-programming", "wasm"]
+keywords = ["dioxus", "router", "routing", "file-based"]
+[dependencies]

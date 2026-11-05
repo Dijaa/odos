@@ -1,0 +1,12 @@
+[package]
+name = "odos-build"
+version = "0.0.1"
+edition = "2024"
+description = "Build-time route generator for odos (file-based routing for Dioxus)"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Dijaa/odos"
+readme = "README.md"
+categories = ["gui", "web-programming", "development-tools::build-utils"]
+keywords = ["dioxus", "router", "codegen", "file-based"]
+
+[dependencies]
