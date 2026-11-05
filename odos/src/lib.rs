@@ -1,11 +1,163 @@
 //! # odos
 //!
-//! File-based routing for [Dioxus](https://dioxuslabs.com).
+//! File-based routing for [Dioxus](https://dioxuslabs.com) 0.7, inspired by
+//! the Next.js App Router. Create files in `src/pages/` and the `Route` enum
+//! is generated for you at compile time.
 //!
-//! **Work in progress.** Pages in `src/pages/` will become routes automatically,
-//! similar to the Next.js App Router.
+//! ## Quick start
+//!
+//! **1. Add the crates** to your app's `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! dioxus = { version = "0.7", features = ["router"] }
+//! odos = "0.1"
+//!
+//! [build-dependencies]
+//! odos-build = "0.1"
+//! ```
+//!
+//! **2. Create `build.rs`** next to `Cargo.toml`:
+//!
+//! ```ignore
+//! fn main() {
+//!     odos_build::build();
+//! }
+//! ```
+//!
+//! **3. Include the routes** in `src/main.rs`:
+//!
+//! ```ignore
+//! use dioxus::prelude::*;
+//!
+//! odos::routes!(); // defines `Route`
+//!
+//! fn main() {
+//!     dioxus::launch(App);
+//! }
+//!
+//! #[component]
+//! fn App() -> Element {
+//!     rsx! { Router::<Route> {} }
+//! }
+//! ```
+//!
+//! **4. Add a page** at `src/pages/page.rs`:
+//!
+//! ```ignore
+//! use dioxus::prelude::*;
+//!
+//! #[component]
+//! pub fn Page() -> Element {
+//!     rsx! { h1 { "Hello from /" } }
+//! }
+//! ```
+//!
+//! You don't write `mod pages;`: the generated code includes every page itself.
+//!
+//! ## File conventions
+//!
+//! ```text
+//! src/pages/
+//! ├── layout.rs              root layout (navbar, etc.)
+//! ├── page.rs                /
+//! ├── not_found.rs           404 for any unknown URL
+//! ├── about/page.rs          /about
+//! ├── (admin)/dashboard/page.rs   /dashboard   (group: not in the URL)
+//! ├── _components/           ignored (private folder)
+//! └── blog/
+//!     ├── layout.rs          layout for everything under /blog
+//!     ├── page.rs            /blog
+//!     ├── [slug]/page.rs     /blog/:slug
+//!     └── [...rest]/page.rs  /blog/:..rest
+//! ```
+//!
+//! | File | Must export |
+//! |------|-------------|
+//! | `page.rs` | `#[component] pub fn Page(...) -> Element` |
+//! | `layout.rs` | `#[component] pub fn Layout() -> Element`, rendering `Outlet::<Route> {}` |
+//! | `not_found.rs` (root only) | `#[component] pub fn NotFound(segments: Vec<String>) -> Element` |
+//!
+//! Other `.rs` files inside `src/pages/` are ignored.
+//!
+//! | Folder name | Meaning |
+//! |-------------|---------|
+//! | `about` | static segment `/about` |
+//! | `[slug]` | dynamic segment, passed to `Page` as `slug` |
+//! | `[...rest]` | catch-all, passed as `rest: Vec<String>`; must be the last segment |
+//! | `(name)` | group: organizes files (and can have its own `layout.rs`) without changing the URL |
+//! | `_name` | private: ignored, never becomes a route |
+//!
+//! ## Route parameters
+//!
+//! Each `[param]` in the path must be an argument of `Page` with the same name.
+//! The type is up to you, as long as it implements `FromStr` and `Display`:
+//!
+//! ```ignore
+//! // src/pages/users/[id]/page.rs  →  /users/:id
+//! #[component]
+//! pub fn Page(id: u32) -> Element {
+//!     rsx! { "User #{id}" }
+//! }
+//! ```
+//!
+//! Layouts take no arguments. To read the current route inside a layout,
+//! use `use_route::<Route>()`.
+//!
+//! ## Linking between pages
+//!
+//! Each page becomes a `Route` variant, named in PascalCase from its URL:
+//!
+//! | File | Variant |
+//! |------|---------|
+//! | `page.rs` | `Route::Index {}` |
+//! | `about/page.rs` | `Route::About {}` |
+//! | `about-us/page.rs` | `Route::AboutUs {}` |
+//! | `(admin)/dashboard/page.rs` | `Route::Dashboard {}` |
+//! | `blog/[slug]/page.rs` | `Route::BlogSlug { slug }` |
+//! | `2024/page.rs` | `Route::Page2024 {}` |
+//! | `not_found.rs` | `Route::NotFound { segments }` |
+//!
+//! ```ignore
+//! use crate::Route;
+//!
+//! rsx! {
+//!     Link { to: Route::BlogSlug { slug: "hello".into() }, "Read post" }
+//! }
+//! ```
+//!
+//! ## Shared components
+//!
+//! Keep components used by several pages outside `src/pages/`, for example in
+//! `src/components.rs` with `mod components;` in `main.rs`, and import them
+//! with `use crate::components::...`.
+//!
+//! ## Build errors
+//!
+//! Mistakes are reported when you build, pointing at the file:
+//!
+//! ```text
+//! odos: src/pages/blog/[slug]/page.rs: `Page` takes ["id"] but the route has ["slug"]
+//! ```
+//!
+//! It checks for:
+//!
+//! - a `page.rs` without `pub fn Page`;
+//! - `Page` arguments that don't match the route parameters;
+//! - the same parameter used twice in one route (`[id]/x/[id]`);
+//! - a catch-all that is not the last segment;
+//! - `not_found.rs` outside the root of `src/pages/`;
+//! - invalid names like `[my-slug]` (parameters must be valid Rust identifiers);
+//! - two pages with the same URL or the same variant name.
+//!
+//! ## Example
+//!
+//! A complete app lives in
+//! [`examples/basic`](https://github.com/Dijaa/odos/tree/main/examples/basic).
 
-/// Includes the routes generated by `odos-build` in your `build.rs`.
+/// Includes the `Route` enum generated by `odos_build::build()` in your `build.rs`.
+///
+/// Call it once, at the root of your crate (usually `main.rs`).
 ///
 /// ```ignore
 /// odos::routes!();
