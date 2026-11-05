@@ -14,7 +14,7 @@ fn main() {
 It scans `src/pages/`, checks every `page.rs`, and writes the `Route` enum to
 `$OUT_DIR/odos_routes.rs`, which `odos::routes!()` includes.
 
-See the [odos docs](https://docs.rs/odos) for the file conventions.
+See the [odos docs](https://docs.rs/odos/latest/odos/) for the file conventions.
 
 ## License
 

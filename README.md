@@ -71,8 +71,8 @@ pub fn Page(slug: String) -> Element {
 Link to it with `Route::BlogSlug { slug: "hello".into() }`.
 
 The full guide (layouts, parameters, route names, build errors) is on
-[docs.rs/odos](https://docs.rs/odos). A working app is in
-[`examples/basic`](examples/basic).
+[docs.rs/odos](https://docs.rs/odos/latest/odos/). A working app is in
+[`examples/basic`](https://github.com/Dijaa/odos/tree/main/examples/basic).
 
 ## Crates
 
