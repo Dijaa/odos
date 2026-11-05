@@ -1,6 +1,7 @@
 <p align="center">
   <img src="assets/odos-logo.svg" alt="odos" width="320">
 </p>
+
 # odos
 
 File-based routing for [Dioxus](https://dioxuslabs.com).
