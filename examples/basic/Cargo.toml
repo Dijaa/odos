@@ -1,0 +1,17 @@
+[package]
+name = "basic"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+dioxus = { version = "0.7", features = ["router"] }
+odos = { path = "../../odos" }
+
+[build-dependencies]
+odos-build = { path = "../../odos-build" }
+
+[features]
+default = ["web"]
+web = ["dioxus/web"]
+desktop = ["dioxus/desktop"]
