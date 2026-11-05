@@ -3509,11 +3509,11 @@ dependencies = [
 
 [[package]]
 name = "odos"
-version = "0.0.2"
+version = "0.1.0"
 
 [[package]]
 name = "odos-build"
-version = "0.0.1"
+version = "0.1.0"
 dependencies = [
  "quote",
  "syn 3.0.9",
